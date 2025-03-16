@@ -2,6 +2,5 @@
 
 
 
-;;Directories should have a TRAILING SLASH (i.e "~/monitor/" "~/videos/" etc.)
-(def directory "~/monitor/")
-(def max-retries 10)
+(def directory (str (System/getProperty "user.home") 
+                    "/monitor/")) ;; <----- CHANGE THIS PART IF YOU WANT

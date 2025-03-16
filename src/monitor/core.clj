@@ -13,6 +13,8 @@
         _ (e/quit driver)]
     html))
 
+
+
 (defn get-links [html]
   (let [matches (re-seq #"\"fileThumb\"\shref=\"(.+?)\"" html)
         links (map #(str "https:" (second %)) matches)]
@@ -26,22 +28,33 @@
       .getName))
 
 
-;;seems like we can get 10 files at a time before 429 Too Many Requests exception              
-(defn dl [uri]
-  (let [filepath (str config/directory (get-filename uri))
+(defn isolate-new-files [links]
+  (reduce #(if (.exists (io/file (str config/directory (get-filename %2))))
+             %1
+             (conj %1 %2)) 
+          [] 
+          links))
+
+(defn dl [uri folder]
+  (let [filepath (str config/directory folder "/" (get-filename uri))
         _ (io/make-parents filepath)]
-    (if (.exists (io/file filepath)) 
-      (println "Already exists. Skipping...")
       (with-open [in (io/input-stream uri)
                   out (io/output-stream filepath)]
-        (io/copy in out)))))
+        (io/copy in out))))
+
+
+;;seems like we can get ~10 files at a time before 429 Too Many Requests exception. Let's take 5 at a time to be safe
+
+(defn monitor [url]
+    (->> url
+             (get-html)
+             (get-links)
+             (isolate-new-files)
+             (take 5)
+             (map #(dl % (get-filename url)))))
 
 
 
-(defn -main [url]
-  (->> url
-       (get-html)
-       (get-links)
-       (map #(dl %))))
+
 
 
