@@ -5,6 +5,7 @@
 
 ;;REMEMBER TO SET YOUR PREFFERED DOWNLOAD PATH IN config.clj! :)
 
+
 (defn get-html [url]
   (let [driver (e/firefox-headless)
         _ (e/go driver url)

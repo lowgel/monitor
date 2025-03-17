@@ -1,10 +1,8 @@
 # monitor
 
-FIXME: description
+Webscraping program that monitors and downloads media from forum threads
 
-## Installation
-
-Download from http://example.com/FIXME.
+Warning: still WIP
 
 ## Usage
 
