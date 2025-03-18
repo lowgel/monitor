@@ -23,7 +23,7 @@
 (defn download-raw-html [folder-name html]
   (let [filepath (str config/directory folder-name "/" folder-name ".html")
         _ (io/make-parents filepath)
-        - (spit filepath html)]
+        _ (spit filepath html)]
     html))
 
 (defn get-links [html]
@@ -68,18 +68,17 @@
          (isolate-new-files folder-name)
          (take 5)
          (map #(dl % folder-name))
-         (last))))
+         (last)))) ;;prevents early evaluation from functions like (seq).  also allows convenient use with if and while
 
 
 
 
-(defn monitor-loop [url] 
+(defn monitor-loop [url]
   (let [driver (e/firefox-headless)
-        results (while (monitor driver url)
-                  (Thread/sleep 1000)
-                  (println "test"))
+        results (while (thread-alive? (get-html driver url))
+                  (monitor driver url)
+                  (Thread/sleep 5000))
         _ (e/quit driver)]
     results))
-
 
 
