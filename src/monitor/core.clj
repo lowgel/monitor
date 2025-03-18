@@ -6,15 +6,17 @@
 ;;REMEMBER TO SET YOUR PREFFERED DOWNLOAD PATH IN config.clj! :)
 
 
-(defn get-html [url]
-  (let [driver (e/firefox-headless)
-        _ (e/go driver url)
+(defn get-html [driver url]
+  (let [_ (e/go driver url)
         _ (e/wait 1)
-        html (e/get-source driver)
-        _ (e/quit driver)]
+        html (e/get-source driver)]
     html))
 
-
+(defn download-raw-html [folder-name html]
+  (let [filepath (str config/directory folder-name "/" folder-name ".html")
+        _ (io/make-parents filepath)
+        - (spit filepath html)]
+    html))
 
 (defn get-links [html]
   (let [matches (re-seq #"\"fileThumb\"\shref=\"(.+?)\"" html)
@@ -42,21 +44,34 @@
         _ (io/make-parents filepath)]
       (with-open [in (io/input-stream uri)
                   out (io/output-stream filepath)]
-        (io/copy in out))))
+        (io/copy in out))
+      filepath))
 
 
 ;;seems like we can get ~10 files at a time before 429 Too Many Requests exception. Let's take 5 at a time to be safe
 
-(defn monitor [url]
+(defn monitor [driver url]
+  (let [folder-name (get-filename url)]
     (->> url
-             (get-html)
-             (get-links)
-             (isolate-new-files (get-filename url))
-             (take 5)
-             (map #(dl % (get-filename url)))))
+         (get-html driver)
+         (download-raw-html folder-name)
+             ;; TODO clean html of non-thumb links
+         (get-links)
+         (isolate-new-files folder-name)
+         (take 5)
+         (map #(dl % folder-name))
+         (last))))
 
 
 
+
+(defn monitor-loop [url] 
+  (let [driver (e/firefox-headless)
+        results (while (monitor driver url)
+                  (Thread/sleep 1000)
+                  (println "test"))
+        _ (e/quit driver)]
+    results))
 
 
 
