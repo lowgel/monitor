@@ -6,6 +6,14 @@
 ;;REMEMBER TO SET YOUR PREFFERED DOWNLOAD PATH IN config.clj! :)
 
 
+(defn thread-alive? [html]
+  (if (re-find #"<img src=\"https://sys.4chan.org/image/error/404/rid.php\" alt=\"404 Not Found\">" html)
+    false
+    true))
+
+
+
+
 (defn get-html [driver url]
   (let [_ (e/go driver url)
         _ (e/wait 1)

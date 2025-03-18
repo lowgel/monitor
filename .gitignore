@@ -1,3 +1,5 @@
+.clj-kondo/
+.lsp/.cache/
 /target
 /classes
 /checkouts
