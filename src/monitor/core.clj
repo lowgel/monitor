@@ -29,8 +29,9 @@
       .getName))
 
 
-(defn isolate-new-files [links]
-  (reduce #(if (.exists (io/file (str config/directory (get-filename %2))))
+
+(defn isolate-new-files [folder links]
+  (reduce #(if (.exists (io/file (str config/directory folder "/" (get-filename %2))))
              %1
              (conj %1 %2)) 
           [] 
@@ -50,7 +51,7 @@
     (->> url
              (get-html)
              (get-links)
-             (isolate-new-files)
+             (isolate-new-files (get-filename url))
              (take 5)
              (map #(dl % (get-filename url)))))
 
