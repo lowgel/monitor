@@ -13,6 +13,7 @@
 ;;case doesn't matter.
 ;;
 ;;good luck!
+;;TESSTING IF THE GITIGNORE WORKS
 
 [{:board g
   :keywords #{"tpg" "fastman" "gnu"}}
