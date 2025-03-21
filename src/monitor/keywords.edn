@@ -1,0 +1,22 @@
+
+;;------------------------------------------------------------
+;;Welcome to keywords.edn! This is where you'll configure all
+;;the keywords you want to monitor. The syntax is important, so 
+;; take a look at the examples I've left for you (feel free to 
+;;edit them once you have the hang of things. Here is the 
+;;basic structure:
+;;
+;; {:board NAME-OF-BOARD :keywords #{"your" "keywords" "here"}}
+;;
+;;everything goes inside the square braces.
+;;
+;;case doesn't matter.
+;;
+;;good luck!
+
+[{:board g
+  :keywords #{"tpg" "fastman" "gnu"}}
+ {:board wsg
+  :keywords #{"feels" "gondola"}}
+ {:board v
+  :keywords #{"deus ex" "draw thread" "morrowind"}}]

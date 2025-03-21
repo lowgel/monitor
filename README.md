@@ -1,3 +1,4 @@
+
 # monitor
 
 Webscraping program that monitors and downloads media from forum threads
@@ -17,14 +18,6 @@ FIXME: listing of options this app accepts.
 ## Examples
 
 ...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
 
 ## License
 

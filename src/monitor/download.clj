@@ -5,7 +5,8 @@
 
 ;;REMEMBER TO SET YOUR PREFFERED DOWNLOAD PATH IN config.clj! :)
 
-
+;;INDIVIDUAL LINK DOWNLOADING
+;;---------------------------------------------------------
 (defn thread-alive? [html]
   (if (re-find #"<img src=\"https://sys.4chan.org/image/error/404/rid.php\" alt=\"404 Not Found\">" html)
     false
@@ -56,6 +57,34 @@
       filepath))
 
 
+;; CATALOGUE PARSING
+;;------------------------------------------------------------------
+(defn parse-log 
+"filters the catalogs into links and descriptions"  
+[driver url]
+  (let [_ (e/go driver url)
+        titles (->> (e/get-source driver)
+                    (re-seq  #"<a href=\"(.*?)\">.*?<div class=\"teaser\">(.*?)</div>")
+                    (map  #(into {} (seq {:link (str "https:" (nth % 1))
+                                          :description (nth % 2)})))                ;; take link and teaser info of all posts in the 'log
+                    (rest))]                     ;; ditch the first one one (it's irrelevant to us)
+
+    titles))
+
+(defn get-matches
+  "returns a collection of all links to threads that match the search term (case agnostic)"
+  [term parsed-log]
+  (reduce #(if (re-find (re-pattern (str "(?i)" term)) (:description %2))
+             (conj %1 (:link %2))
+             %1)
+          [] parsed-log))
+
+
+
+
+
+
+
 ;;seems like we can get ~10 files at a time before 429 Too Many Requests exception. Let's take 5 at a time to be safe
 (defn monitor 
   [driver url]
@@ -85,15 +114,3 @@
 
 
 
-
-(defn parse-log 
-"filters the catalogs into links and teaser descriptions"  
-[driver url]
-  (let [_ (e/go driver url)
-        titles (->> (e/get-source driver)
-                    (re-seq  #"<a href=\"(.*?)\">.*?<div class=\"teaser\">(.*?)</div>")
-                    (map  #(into {} (seq {:link (str "https:" (nth % 1))
-                                          :text (nth % 2)})))                ;; take link and teaser info of all posts in the 'log
-                    (rest))                                                  ;; ditch the first one one (it's irrelevant to us)
-        _ (e/quit driver)]
-    titles))
