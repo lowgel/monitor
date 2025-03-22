@@ -1,5 +1,5 @@
 
-![Alt text](relative%20resources/monitor-logo.jpg?raw=true "Monitor Lizard Image")
+![image](resources/monitor-logo.jpg?raw=true "Monitor Lizard Image")
 
 # monitor
 
