@@ -13,4 +13,4 @@ pom.xml.asc
 /.prepl-port
 .hgignore
 .hg/
-src/monitor/keywords.edn
+/src/monitor/keywords.edn

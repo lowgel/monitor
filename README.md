@@ -1,4 +1,6 @@
 
+![Alt text](relative%20resources/monitor-logo.jpg?raw=true "Monitor Lizard Image")
+
 # monitor
 
 Webscraping program that monitors and downloads media from forum threads
