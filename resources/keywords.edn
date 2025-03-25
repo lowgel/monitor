@@ -1,0 +1,43 @@
+
+;;------------------------------------------------------------
+;; Welcome to keywords.edn! This is where you'll configure all
+;; the keywords you want to monitor. The syntax is important, so 
+;; take a look at the examples I've left for you (feel free to 
+;; edit them once you have the hang of things.) Here is the 
+;; basic structure:
+
+;; {:board "NAME-OF-BOARD" 
+;; :keywords #{"your" "keywords" "here"}
+;; :blacklist #{"blacklisted" "terms" "here"}}
+
+;; the monitor will download all threads that match at least one keyword,
+;; and don't match ANY blacklist terms. 
+
+;; If you want to download ALL threads on a board (not recommended) put an empty string (aka "")
+;; in the keywords. Do NOT put an empty string in the blacklist, as this will blacklist every thread
+;; and break your downloads. 
+
+;; keywords and blacklists should be in quotes and seperated by a single space. 
+
+;; you can use regex if you want
+
+;; case doesn't matter.
+
+;; new board entries should remain inside the square braces.
+
+;; good luck!
+;;------------------------------------------------------------
+
+;;EXAMPLE CONFIG -- EDIT ME!
+
+[
+{:board "g"
+  :keywords #{"/tpg/" "linux" "gnu"}
+  :blacklist #{"windows" "DALL-E"}}
+{:board "wsg"
+ :keywords #{"feels" "gondola"}
+ :blacklist #{}}
+{:board "v"
+ :keywords #{"morrowind" "deus ex"}
+ :blacklist #{"DALL-E"}}
+]

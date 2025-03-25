@@ -1,0 +1,19 @@
+html {
+	-moz-text-size-adjust: 100%;
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
+}
+
+body {
+	background: #1d1f21 none;
+	color: #c5c8c6;
+	font-family: arial, helvetica, sans-serif;
+	font-size: 10pt;
+	margin-left: 0;
+	margin-right: 0;
+	margin-top: 5px;
+	padding-left: 5px;
+	padding-right: 5px;
+}
+
+
