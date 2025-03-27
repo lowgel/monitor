@@ -32,19 +32,19 @@
       java.io.File.
       .getName))
 
+(defn get-thumbnails [parsed-html]
+  (let [thumbnails (->> (.select parsed-html "img")
+                        (map #(str "https:" (.attr % "src")))
+                        (filter #(not (re-find #"image" %))))] ;; filter out banners and stuff
+    thumbnails))
+
 (defn get-links [html]
   (let [source (Jsoup/parse html)
         media (->> (.select source "a.fileThumb")
                    (map #(str "https:" (.attr % "href"))))
-        ]
-    media))
+        thumbs (get-thumbnails source)]
+    (concat media thumbs)))
 
-(defn get-thumbnails [html]
-  (let [source (Jsoup/parse html)
-        thumbnails (->> (.select source "img")
-                        (map #(str "https:" (.attr % "src")))
-                        (filter #(not (re-find #"image" %))))] ;; filter out banners and stuff
-    thumbnails))
 
 (defn get-board [url]
   (second (re-find #"https://boards.4chan.org/(.*?)/thread/*" url)))
@@ -52,19 +52,25 @@
 
 
 (defn isolate-new-files [folder links]
-  (reduce #(if (.exists (io/file (str dl-dir folder "/" (get-filename %2))))
+  (reduce #(if (or (.exists (io/file (str dl-dir folder "/thumbnails/" (get-filename %2)))) 
+                   (.exists (io/file (str dl-dir folder "/" (get-filename %2)))))
              %1
-             (conj %1 %2)) 
-          [] 
+             (conj %1 %2))
+          []
           links))
 
+(defn thumbnail? [uri]
+  (if (re-find #"s.jpg" uri) true false))
+
 (defn dl [uri folder]
-  (let [filepath (str dl-dir folder "/" (get-filename uri))
+  (let [filepath (if (thumbnail? uri) 
+                   (str dl-dir folder "/thumbnails/" (get-filename uri))
+                   (str dl-dir folder "/" (get-filename uri)))
         _ (io/make-parents filepath)]
-      (with-open [in (io/input-stream uri)
-                  out (io/output-stream filepath)]
-        (io/copy in out))
-      filepath))
+    (with-open [in (io/input-stream uri)
+                out (io/output-stream filepath)]
+      (io/copy in out))
+    filepath))
 
 
 ;; CATALOGUE PARSING
@@ -111,7 +117,7 @@
 
 
 
-;;seems like we can get ~10 files at a time before 429 Too Many Requests exception. Let's take 5 at a time to be safe
+;;seems like we can get ~10 files at a time before 429 Too Many Requests exception. Let's take 9 at a time to be safe (adjust if error)
 (defn monitor
   [driver url]
   (let [folder-name (str (get-board url) "/" (get-filename url))]
@@ -120,7 +126,7 @@
          (ws/download-modified-html dl-dir folder-name)
          (get-links)
          (isolate-new-files folder-name)
-         (take 5)
+         (take 9)
          (map #(dl % folder-name))
          (last)))) ;;prevents early evaluation. 
 
